@@ -106,4 +106,29 @@ class behat_mod_forum extends behat_base {
 
     }
 
+    /**
+     * Fill in grade marking guide criteria for a forum
+     *
+     * Expects a table like:
+     *  | remark    | This is a grading remark |
+     *  | score     | 100                      |
+     *
+     * @Given /^I fill in forum marking criteria with these values:$/
+     * @param TableNode $data
+     * @return Given[]
+     */
+    public function i_fill_in_forum_marking_criteria_with_these_values(TableNode $data) {
+
+        $actions = array();
+
+        foreach ($data->getRows() as $values) {
+            $key    = $values[0];
+            $value  = $values[1];
+
+            $type = $key == 'remark' ? 'textarea' : 'input';
+            $actions[] = new Given('I set the field with xpath "//td[@class=\''.$key.'\']/'.$type.'" to "'.$value.'"');
+        }
+
+        return $actions;
+    }
 }

@@ -178,4 +178,38 @@ class behat_grading extends behat_base {
             new Given('I save the advanced grading form')
         );
     }
+
+    /**
+     * Add a marking criteria
+     *
+     * Expects a table like:
+     *  | shortname          | This is a short name         |
+     *  | description        | This is a description        |
+     *  | descriptionmarkers | This is a description marker |
+     *  | maxscore           | 100                          |
+     *
+     * @Given /^I add a marking criteria with these values:$/
+     * @param TableNode $data
+     * @return Given[]
+     */
+    public function i_add_a_marking_criteria_with_these_values(TableNode $data) {
+
+        $actions = array();
+
+        foreach ($data->getRows() as $values) {
+            $key    = $values[0];
+            $value  = $values[1];
+
+            if ($key == 'shortname') {
+                $actions[] = new Given('I click on "'.get_string('clicktoeditname', 'gradingform_guide').'" "text"');
+            } else {
+                $shortkey = str_replace('description', 'desc', $key);
+                $actions[] = new Given('I click on ".criterion'.$shortkey.' span" "css_element"');
+            }
+
+            $actions[] = new Given('I set the field "guide[criteria][NEWID1]['.$key.']" to "'.$value.'"');
+        }
+
+        return $actions;
+    }
 }
