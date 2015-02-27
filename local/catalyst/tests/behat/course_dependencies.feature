@@ -317,8 +317,59 @@ Feature: Allow one course completion to be a dependency for completing another c
 
 
     
-
     Scenario: On enrolment in course this criteria should complete when dependency is complete
-
-
+        Given I log in as "admin"
+        And I follow "Completion course 2"
+        And I turn editing mode on
+        And I add the "Self completion" block
+        And I add the "Course completion status" block
+        And I follow "Course completion"
+        And I set the following fields to these values:
+        | id_criteria_self | 1 |
+        And I press "Save changes"
+        And I am on homepage
+        And I follow "Completion course 1"
+        And I follow "Course completion"
+        And I set the following fields to these values:
+        | Courses available  | Miscellaneous / Completion course 2 |
+        And I press "Save changes"
+        And I add the "Course completion status" block
+        And I log out
+        And I log in as "student1"
+        And I follow "Completion course 2"
+        And I follow "Complete course"
+        And I press "Yes"
+        And I trigger cron
+        And I am on homepage
+        And I follow "Completion course 1"
+        Then I should see "Status: Complete" in the ".block_completionstatus" "css_element"
+    
+    
     Scenario: On enrolment in course this criteria shouldn't complete when dependency is incomplete
+        Given I log in as "admin"
+        And I follow "Completion course 2"
+        And I turn editing mode on
+        And I add the "Self completion" block
+        And I add the "Course completion status" block
+        And I follow "Course completion"
+        And I set the following fields to these values:
+        | id_criteria_self | 1 |
+        And I press "Save changes"
+        And I am on homepage
+        And I follow "Completion course 1"
+        And I follow "Course completion"
+        And I set the following fields to these values:
+        | Courses available  | Miscellaneous / Completion course 2 |
+        And I press "Save changes"
+        And I add the "Course completion status" block
+        And I log out
+        And I log in as "student1"
+        And I follow "Completion course 2"
+        And I follow "Complete course"
+        And I press "No"
+        And I trigger cron
+        And I am on homepage
+        And I follow "Completion course 1"
+        And I wait "30" seconds
+        Then I should see "Status: Not yet started" in the ".block_completionstatus" "css_element"
+    
